@@ -11,7 +11,7 @@ export default class Login extends React.Component{
 				FB.login(function(response){
 					console.log(response);
 				}, {
-						scope: 'public_profile,email,manage_pages'
+						scope: 'public_profile,email'
 				});
 			}
 		}
