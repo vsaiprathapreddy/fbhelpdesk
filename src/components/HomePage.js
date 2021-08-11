@@ -96,7 +96,7 @@ const filterConversations = (events) => {
   })
 }
 
-const PAGE_ACCESS_TOKEN = 'EAAD3CxgY3X4BAOsvZAY8VvDczhNxaYGZBVWSkXZBU6hk0pQpZBMduisawcLIiF8VfeLyQjnmEK3thVTILZBHQAasOBcLaL4mUEwlIOlSX4tqKbCZAJ9KpBnsqlTjZAAMiMr3pZBsNsoxEgPjN8kBzHxwvuJNJdiMFZCJSuSX6GQaYMM6GwOBMxts6vPlziZAGvahIQCvdXWW7pugZDZD';
+const PAGE_ACCESS_TOKEN = 'EAAD3CxgY3X4BADo8kCiLuJyyagX5B1udlC0cA5vocp8b2q9EKYaZAr2ZCSqMNBlGDel9DhSfLcj1rBR1QdwjPdCvmANiSQLV3C6luFYpPNEl7Lj4Q6z0P7T4cyWEeJJUX23Am77uQVSAJYWqxHsj8ciYKUYf52pmckUl8lVK5jy6sCwiUxMHQ4FbRXrtIBv9ssahh3eAZDZD';
 
 export default function HomePage(props) {
   const classes = useStyles();
