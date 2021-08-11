@@ -9,9 +9,9 @@ export default class Login extends React.Component {
         if (typeof (FB) != undefined) {
             /*global FB*/
             FB.login(function (response) {
-                const token = response.accessToken;
-                console.log(response)
-                if (token) {
+                if(response.status == "connected"){
+                    const token = response.authResponse.accessToken;
+                    console.log(response)
                     sessionStorage.setItem('token', token);
                     window.location = "/dashboard"
                 }
