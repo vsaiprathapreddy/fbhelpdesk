@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 	},
 	chatSection: {
 		width: '100%',
-		height: '90vh'
+		height: '90vh - 64px'
 	},
 	headBG: {
 		backgroundColor: '#e0e0e0'
