@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -106,6 +107,11 @@ export default function HomePage(props) {
   const [activeEventID, setActiveEventID] = useState(null);
   const [message, setMessage] = useState('');
 
+  const onLoggedOut = () => {
+    sessionStorage.clear();
+    window.location = "/login"
+  }
+
   useEffect(() => {
     if (!listening) {
       const events = new EventSource('https://richpanel-be.herokuapp.com/events');
@@ -171,6 +177,16 @@ export default function HomePage(props) {
           <Typography variant="h6" noWrap>
             Rich Panel - Agent
           </Typography>
+
+          <Button variant="outlined" style={{
+            backgroundColor: '#ffffff',
+            position: 'absolute',
+            top: 10,
+            right: 10
+          }}
+          onClick={() => onLoggedOut()}
+          >Logout</Button>
+
         </Toolbar>
       </AppBar>
       <Drawer
