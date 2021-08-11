@@ -7,23 +7,15 @@ export default class Login extends React.Component {
 
     invokeLoginModal = () => {
         if (typeof (FB) != undefined) {
-            FB.getLoginStatus(function (response) {
-                const { status, accessToken } = response;
-                if (status == "connected") {
-                    sessionStorage.setItem('token', accessToken);
+            /*global FB*/
+            FB.login(function (response) {
+                const token = response.accessToken;
+                if (token) {
+                    sessionStorage.setItem('token', token);
                     window.location = "/dashboard"
-                } else {
-                    /*global FB*/
-                    FB.login(function (response) {
-                        const token = response.accessToken;
-                        if (token) {
-                            sessionStorage.setItem('token', token);
-                            window.location = "/dashboard"
-                        }
-                    }, {
-                        scope: 'public_profile,email'
-                    });
                 }
+            }, {
+                scope: 'public_profile,email'
             });
         }
     }

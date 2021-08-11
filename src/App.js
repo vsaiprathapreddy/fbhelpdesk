@@ -34,30 +34,30 @@ function PrivateRoute({ children, ...rest }) {
 
 function App() {
   const token = sessionStorage.getItem('token');
-
-  return (
-    <Router>
-      <Switch>
-        <Route
-          exact
-          path="/"
-          render={() => {
-            return (
-              token ?
-                <Redirect to="/dashboard" /> :
-                <Redirect to="/login" />
-            )
-          }}
-        />
-        <Route path="/login">
-          <Login />
-        </Route>
-        <PrivateRoute path="/dashboard">
-          <HomePage />
-        </PrivateRoute>
-      </Switch>
-    </Router>
-  )
+  return  <HomePage />
+  // return (
+  //   <Router>
+  //     <Switch>
+  //       <Route
+  //         exact
+  //         path="/"
+  //         render={() => {
+  //           return (
+  //             token ?
+  //               <Redirect to="/dashboard" /> :
+  //               <Redirect to="/login" />
+  //           )
+  //         }}
+  //       />
+  //       <Route path="/login">
+  //         <Login />
+  //       </Route>
+  //       <PrivateRoute path="/dashboard">
+  //         <HomePage />
+  //       </PrivateRoute>
+  //     </Switch>
+  //   </Router>
+  // )
 }
 
 export default App;
