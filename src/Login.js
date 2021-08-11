@@ -10,6 +10,10 @@ export default class Login extends React.Component{
 				/*global FB*/
 				FB.login(function(response){
 					console.log(response);
+					const token = response.accessToken;
+					localStorage.setItem('token',token);
+					// add routes - public 
+					// redirect to home page - private
 				}, {
 						scope: 'public_profile,email'
 				});
