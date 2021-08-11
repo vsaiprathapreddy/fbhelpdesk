@@ -38,9 +38,6 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/dashboard">
-          <HomePage />
-        </Route>
         <Route
           exact
           path="/"
@@ -55,6 +52,9 @@ function App() {
         <Route path="/login">
           <Login />
         </Route>
+        <PrivateRoute path="/dashboard">
+          <HomePage />
+        </PrivateRoute>
       </Switch>
     </Router>
   )
