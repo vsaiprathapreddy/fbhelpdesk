@@ -10,6 +10,7 @@ export default class Login extends React.Component {
             /*global FB*/
             FB.login(function (response) {
                 const token = response.accessToken;
+                console.log(response)
                 if (token) {
                     sessionStorage.setItem('token', token);
                     window.location = "/dashboard"
