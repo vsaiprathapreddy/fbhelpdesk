@@ -19,9 +19,7 @@ export default class Login extends React.Component {
                         if (token) {
                             sessionStorage.setItem('token', token);
                             window.location = "/dashboard"
-                        // } else {
-                        //     alert('Login Failed')
-                        // }
+                        }
                     }, {
                         scope: 'public_profile,email'
                     });
