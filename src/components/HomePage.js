@@ -84,12 +84,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const filterConversations = (events) => {
+  return events.filter((event) => {
+    const { object, entry = [] } = event;
+    const { changes = [] } = entry[0] || { changes: [] };
+    const { field, value = {} } = changes[0] || {};
+    const { created_time, from = {}, item, message } = value;
+
+    return ["comment"].includes(item)
+  })
+}
+
+const PAGE_ACCESS_TOKEN = 'EAAD3CxgY3X4BAH0wTZCM3IVzSQEPZCimwMIYLoS74MRzUMhchbltpDbIbXdLvZBJ2lGLvWZARSBMfPRMrTKNq5Sdhktzvp4JnP8qMAfr3szmVT7Y7MHcwJXZAQZBAZCGvkILfnLWd48ju0zZC4dhrEkZCRBkORaj42j7Mi8XoEsnHdp3k4VvVc6re8d8uXlYdepyI9ZBwtEMkVBHeD3bw9WPEJmeFir4pFOA0ZD';
+
 export default function HomePage(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [events, setEvents] = useState([]);
   const [listening, setListening] = useState(false);
+  const [activeEventID, setActiveEventID] = useState(null);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     if (!listening) {
@@ -100,11 +115,12 @@ export default function HomePage(props) {
 
         if (Array.isArray(parsedData)) {
           setEvents((events) => {
-            setEvents(parsedData)
+            window.mydata = filterConversations(parsedData)
+            setEvents(filterConversations(parsedData))
           });
         } else {
           setEvents((events) => {
-            setEvents([...events, parsedData])
+            setEvents([...filterConversations([parsedData]), ...events])
           });
         }
       };
@@ -121,7 +137,15 @@ export default function HomePage(props) {
     setOpen(false);
   };
 
-  console.log(events);
+  const postMessage = (postID) => {
+    fetch(`https://graph.facebook.com/${postID}/comments?message=${message}&access_token=${PAGE_ACCESS_TOKEN}`, { method: 'POST' })
+      .then(data => {
+        return data.json()
+      }).then(data => {
+        setMessage('')
+        console.log(data);
+      });;
+  }
 
   return (
     <div className={classes.root}>
@@ -180,7 +204,16 @@ export default function HomePage(props) {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <ChatBox events={events} />
+        <ChatBox
+          events={events}
+          setActiveEventID={(eventID) => setActiveEventID(eventID)}
+          activeEventID={activeEventID}
+          message={message}
+          setMessage={(event) => {
+            setMessage(event.target.value)
+          }}
+          postMessage={(id) => postMessage(id)}
+        />
       </main>
     </div>
   );

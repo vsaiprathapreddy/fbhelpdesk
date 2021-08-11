@@ -14,6 +14,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Fab from '@material-ui/core/Fab';
 import SendIcon from '@material-ui/icons/Send';
+import moment from 'moment';
 
 const useStyles = makeStyles({
 	table: {
@@ -35,10 +36,39 @@ const useStyles = makeStyles({
 	}
 });
 
-const Chat = ({ events }) => {
+const commetsGroupedByID = (events) => {
+	const comments = {};
+
+	events.forEach((event) => {
+		const { object, entry = [] } = event;
+		const { changes = [] } = entry[0] || { changes: [] };
+		const { field, value = {} } = changes[0] || {};
+		const { created_time, from = {}, item, message, parent_id, post_id, comment_id } = value;
+
+		if (parent_id == post_id) {
+			if (Object.keys(comments).includes(comment_id)) {
+				comments[comment_id].push(value)
+			} else {
+				comments[comment_id] = [value];
+			}
+		} else {
+			if (Object.keys(comments).includes(parent_id)) {
+				comments[parent_id].push(value)
+			} else {
+				comments[parent_id] = [value]
+			}
+		}
+	})
+
+	return comments;
+}
+
+const Chat = ({ events, setActiveEventID, activeEventID, message, setMessage, postMessage }) => {
 	const classes = useStyles();
+	const comments = commetsGroupedByID(events);
+	const commentIDs = Object.keys(comments);
 
-
+	console.log(comments, events);
 	return (
 		<div>
 			<Grid container>
@@ -50,17 +80,16 @@ const Chat = ({ events }) => {
 				<Grid item xs={3} className={classes.borderRight500}>
 					<List>
 						{
-							events.map((event) => {
-
-								const { object, entry = [] } = event;
-								const { changes = [] } = entry[0] || { changes: [] };
-								const { field, value = {} } = changes[0] || {};
-								const { created_time, from = {}, item, message } = value;
+							commentIDs.map((commentID) => {
+								const commentValues = comments[commentID];
+								const { created_time, from = {}, item, message } = commentValues[0] || {};
 
 								if (item != "comment") return null;
 
 								return (
-									<ListItem alignItems="flex-start" button key="RemySharp">
+									<ListItem style={commentID == activeEventID ? {
+										backgroundColor: 'rgba(0, 0, 0, 0.04)'
+									} : {}} alignItems="flex-start" button key="RemySharp" onClick={() => setActiveEventID(commentID)}>
 										<ListItemIcon>
 											<Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
 										</ListItemIcon>
@@ -87,43 +116,37 @@ const Chat = ({ events }) => {
 				</Grid>
 				<Grid item xs={9}>
 					<List className={classes.messageArea}>
-						<ListItem key="1">
-							<Grid container>
-								<Grid item xs={12}>
-									<ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-								</Grid>
-								<Grid item xs={12}>
-									<ListItemText align="right" secondary="09:30"></ListItemText>
-								</Grid>
-							</Grid>
-						</ListItem>
-						<ListItem key="2">
-							<Grid container>
-								<Grid item xs={12}>
-									<ListItemText align="left" primary="Hey, Iam Good! What about you ?"></ListItemText>
-								</Grid>
-								<Grid item xs={12}>
-									<ListItemText align="left" secondary="09:31"></ListItemText>
-								</Grid>
-							</Grid>
-						</ListItem>
-						<ListItem key="3">
-							<Grid container>
-								<Grid item xs={12}>
-									<ListItemText align="right" primary="Cool. i am good, let's catch up!"></ListItemText>
-								</Grid>
-								<Grid item xs={12}>
-									<ListItemText align="right" secondary="10:30"></ListItemText>
-								</Grid>
-							</Grid>
-						</ListItem>
+						{
+							(comments[activeEventID] || []).reverse().map((comment) => {
+								const { created_time, from = {}, item, message, parent_id, comment_id } = comment || {};
+								const alignMent = from.id == "4254959437918920" ? "left" : "right";
+
+								return (
+									<ListItem key="1">
+										<Grid container>
+											<Grid item xs={12}>
+												<ListItemText align={alignMent} primary={message}></ListItemText>
+											</Grid>
+											<Grid item xs={12}>
+												<ListItemText align={alignMent} secondary={moment.unix(created_time).fromNow()}></ListItemText>
+											</Grid>
+										</Grid>
+									</ListItem>
+								)
+							})
+						}
 					</List>
 					<Grid container style={{ padding: '20px' }}>
 						<Grid item xs={11}>
-							<TextField id="outlined-basic-email" label="Type Something" fullWidth />
+							<TextField id="outlined-basic-email" label="Type Something" fullWidth value={message} onChange={setMessage} />
 						</Grid>
 						<Grid xs={1} align="right">
-							<Fab color="primary" aria-label="add"><SendIcon /></Fab>
+							<Fab color="primary" aria-label="add" onClick={() => {
+								const activeComment = (comments[activeEventID] || [])[0];
+								const activeCommentID = activeComment?.comment_id;
+								console.log(activeCommentID);
+								postMessage(activeCommentID)
+							}}><SendIcon /></Fab>
 						</Grid>
 					</Grid>
 				</Grid>
