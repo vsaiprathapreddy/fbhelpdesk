@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -18,6 +18,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import ChatBox from './ChatBox';
 
 const drawerWidth = 240;
 
@@ -83,10 +84,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MiniDrawer() {
+export default function HomePage(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [events, setEvents] = useState([]);
+  const [listening, setListening] = useState(false);
+
+  useEffect(() => {
+    if (!listening) {
+      const events = new EventSource('https://richpanel-be.herokuapp.com/events');
+
+      events.onmessage = (event) => {
+        const parsedData = JSON.parse(event.data);
+
+        if (Array.isArray(parsedData)) {
+          setEvents((events) => {
+            setEvents(parsedData)
+          });
+        } else {
+          setEvents((events) => {
+            setEvents([...events, parsedData])
+          });
+        }
+      };
+
+      setListening(true);
+    }
+  }, [listening, events]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -95,6 +120,8 @@ export default function MiniDrawer() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  console.log(events);
 
   return (
     <div className={classes.root}>
@@ -118,7 +145,7 @@ export default function MiniDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Mini variant drawer
+            Rich Panel - Agent
           </Typography>
         </Toolbar>
       </AppBar>
@@ -153,7 +180,7 @@ export default function MiniDrawer() {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-
+        <ChatBox events={events} />
       </main>
     </div>
   );

@@ -1,41 +1,43 @@
 import React from "react";
 import fblogo from "./Facebook-logo.png";
-export default class Login extends React.Component{
-    constructor(props){
+export default class Login extends React.Component {
+    constructor(props) {
         super(props);
     }
 
-		invokeLoginModal = () => {
-			if(typeof(FB) != undefined	){
-				/*global FB*/
-				FB.login(function(response){
-					console.log(response);
-					const token = response.accessToken;
-					localStorage.setItem('token',token);
-					// add routes - public 
-					// redirect to home page - private
-				}, {
-						scope: 'public_profile,email'
-				});
-			}
-		}
+    invokeLoginModal = () => {
+        if (typeof (FB) != undefined) {
+            /*global FB*/
+            FB.login(function (response) {
+                const token = response.accessToken;
+                if (token) {
+                    sessionStorage.setItem('token', token);
+                    window.location = "/dashboard"
+                } else {
+                    alert('Login Failed')
+                }
+            }, {
+                scope: 'public_profile,email'
+            });
+        }
+    }
 
-    render(){
-        return(
+    render() {
+        return (
             <div style={{
-                display:"flex",
-                justifyContent:"center",
-                alignItems:"center",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
                 height: '100vh'
             }}>
                 <div>
                     <h1>Please login to continue</h1>
                     <button onClick={this.invokeLoginModal}>
-                        <img src={fblogo} style={{width:"150px",height:"90px"}}/>
+                        <img src={fblogo} style={{ width: "150px", height: "90px" }} />
                     </button>
                 </div>
             </div>
-            
+
         )
     }
 }
